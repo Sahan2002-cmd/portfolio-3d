@@ -3,61 +3,343 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sahan Tharaka Dias - Full Stack Developer & IT Undergraduate specializing in MERN Stack">
-    <meta name="keywords" content="Sahan Dias, Full Stack Developer, MERN Stack, Portfolio, Web Developer">
-    <meta name="author" content="Sahan Tharaka Dias">
-    <title>Sahan Tharaka Dias | Full Stack Developer</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Sahan Tharaka Dias - Portfolio</title>
+    <meta name="description" content="3D Interactive Portfolio of Sahan Tharaka Dias - IT Undergraduate & Full-Stack Developer">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            background: #0a0a0a;
+            color: #fff;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 50px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 900px;
+            width: 100%;
+            pointer-events: all;
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #00f5ff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient 3s ease infinite;
+        }
+
+        @keyframes gradient {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(20deg); }
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #00f5ff;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            color: #00f5ff;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #ff00ff;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #00f5ff, #ff00ff);
+            border: none;
+            border-radius: 50px;
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+            pointer-events: all;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 245, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #00f5ff;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 245, 255, 0.2);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-10px);
+            border-color: #00f5ff;
+            box-shadow: 0 10px 40px rgba(0, 245, 255, 0.3);
+        }
+
+        .project-card h3 {
+            color: #00f5ff;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .project-date {
+            color: #ff00ff;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        .project-tech {
+            display: inline-block;
+            background: rgba(0, 245, 255, 0.1);
+            border: 1px solid #00f5ff;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-top: 15px;
+            color: #00f5ff;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .skill-tag {
+            background: rgba(0, 245, 255, 0.1);
+            border: 1px solid #00f5ff;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .skill-tag:hover {
+            background: rgba(0, 245, 255, 0.2);
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 245, 255, 0.3);
+        }
+
+        .contact-info {
+            margin: 30px 0;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            font-size: 1.1rem;
+        }
+
+        .contact-item a {
+            color: #00f5ff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .contact-item a:hover {
+            color: #ff00ff;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .social-btn {
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .social-btn:hover {
+            background: rgba(0, 245, 255, 0.2);
+            border-color: #00f5ff;
+            transform: translateY(-3px);
+        }
+
+        nav {
+            position: fixed;
+            top: 30px;
+            right: 50px;
+            z-index: 3;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            pointer-events: all;
+        }
+
+        nav a:hover, nav a.active {
+            background: rgba(0, 245, 255, 0.2);
+            border-color: #00f5ff;
+        }
+
+        .education-item {
+            margin: 25px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid #00f5ff;
+            border-radius: 10px;
+        }
+
+        .education-item h4 {
+            color: #00f5ff;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .education-date {
+            color: #ff00ff;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .card { padding: 30px 20px; }
+            .section { padding: 80px 20px; }
+            nav { 
+                top: 20px; 
+                right: 20px; 
+                flex-direction: column; 
+                gap: 10px;
+            }
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- 3D Canvas Background -->
     <div id="canvas-container"></div>
 
-    <!-- Navigation -->
-    <nav id="navbar">
-        <div class="nav-logo">ST</div>
-        <div class="nav-links">
-            <a href="#home">Home</a>
-            <a href="#about">About</a>
-            <a href="#skills">Skills</a>
-            <a href="#projects">Projects</a>
-            <a href="#certifications">Certifications</a>
-            <a href="#contact">Contact</a>
-        </div>
+    <nav>
+        <a href="#home" class="nav-link">Home</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#skills" class="nav-link">Skills</a>
+        <a href="#projects" class="nav-link">Projects</a>
+        <a href="#education" class="nav-link">Education</a>
+        <a href="#contact" class="nav-link">Contact</a>
     </nav>
 
-    <!-- Main Content -->
     <div class="content">
         <!-- HOME SECTION -->
         <section id="home" class="section">
-            <div class="card hero-card">
-                <div class="hero-content">
-                    <span class="greeting">Hello, I'm</span>
-                    <h1 class="name-gradient">Sahan Tharaka Dias</h1>
-                    <p class="title-text">Full Stack Developer | IT Undergraduate</p>
-                    <p class="subtitle">Building innovative web solutions with MERN Stack & exploring AI/ML technologies</p>
-                    <div class="hero-buttons">
-                        <a href="#projects" class="btn btn-primary">View My Work</a>
-                        <a href="assets/documents/Sahan_Dias_CV.pdf" class="btn btn-secondary" download>Download CV</a>
-                    </div>
-                    <div class="social-links">
-                        <a href="https://github.com/Sahan2002-cmd" target="_blank" title="GitHub">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                            </svg>
-                        </a>
-                        <a href="https://www.linkedin.com/in/sahantharaka-dias-b01322339" target="_blank" title="LinkedIn">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                            </svg>
-                        </a>
-                        <a href="mailto:sahantharakadias@gmail.com" title="Email">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M0 3v18h24v-18h-24zm6.623 7.929l-4.623 5.712v-9.458l4.623 3.746zm-4.141-5.929h19.035l-9.517 7.713-9.518-7.713zm5.694 7.188l3.824 3.099 3.83-3.104 5.612 6.817h-18.779l5.513-6.812zm9.208-1.264l4.616-3.741v9.348l-4.616-5.607z"/>
-                            </svg>
-                        </a>
-                    </div>
+            <div class="card">
+                <h1>Sahan Tharaka Dias</h1>
+                <p class="subtitle">IT Undergraduate | Full-Stack Developer | AI/ML Enthusiast</p>
+                <p>Building innovative web solutions with the MERN stack and exploring the frontiers of AI/ML technologies. Passionate about creating seamless digital experiences that solve real-world problems.</p>
+                <div class="social-links">
+                    <a href="https://github.com/Sahan2002-cmd" target="_blank" class="social-btn">
+                        <span>GitHub</span>
+                    </a>
+                    <a href="https://www.linkedin.com/in/sahantharaka-dias-b01322339" target="_blank" class="social-btn">
+                        <span>LinkedIn</span>
+                    </a>
+                    <a href="#projects" class="btn">View My Work</a>
+                    <a href="#contact" class="btn btn-secondary">Get In Touch</a>
                 </div>
             </div>
         </section>
@@ -65,25 +347,18 @@
         <!-- ABOUT SECTION -->
         <section id="about" class="section">
             <div class="card">
-                <h2 class="section-title">About Me</h2>
-                <div class="about-content">
-                    <p>I'm a motivated 3rd-year Information Technology undergraduate at SLIIT with practical experience in full-stack web development and a growing interest in AI/ML technologies.</p>
-                    <p>Proficient in building applications using the MERN stack, with strong foundations in Java, Python, JavaScript, and database systems including MySQL, MongoDB, and SQL Server.</p>
-                    <p>I'm a self-motivated team player with strong problem-solving and leadership skills, seeking opportunities to apply my technical knowledge and continuously enhance my professional skills.</p>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <h3>5+</h3>
-                            <p>Projects Completed</p>
-                        </div>
-                        <div class="stat-item">
-                            <h3>3+</h3>
-                            <p>Years Experience</p>
-                        </div>
-                        <div class="stat-item">
-                            <h3>6+</h3>
-                            <p>Certifications</p>
-                        </div>
-                    </div>
+                <h2>About Me</h2>
+                <p>I'm a motivated 3rd-year Information Technology undergraduate at SLIIT with practical experience in full-stack web development and a growing interest in AI/ML technologies. My journey in software development has equipped me with strong foundations in building robust applications using modern technologies.</p>
+                
+                <p>I specialize in the MERN stack and have hands-on experience with Java, Python, and various database systems including MySQL, MongoDB, and SQL Server. Through academic and personal projects, I've developed solutions for e-commerce platforms, transport systems, insurance management, and more.</p>
+                
+                <p>As a self-motivated team player with strong problem-solving and leadership skills, I'm seeking Software Engineering opportunities to apply my technical knowledge and continuously enhance my professional capabilities.</p>
+
+                <h3 style="margin-top: 40px;">Work Experience</h3>
+                <div class="education-item">
+                    <h4>Training Bank Associate</h4>
+                    <p class="education-date">Peoples Bank Battaramulla | September 2022 - September 2023</p>
+                    <p>Managed cash deposits, withdrawals, passbook services, cheque processing, account operations, and debit card issuance. Developed strong attention to detail and customer service skills in a professional banking environment.</p>
                 </div>
             </div>
         </section>
@@ -91,49 +366,50 @@
         <!-- SKILLS SECTION -->
         <section id="skills" class="section">
             <div class="card">
-                <h2 class="section-title">Technical Skills</h2>
-                <div class="skills-grid">
-                    <div class="skill-category">
-                        <h3>Programming</h3>
-                        <div class="skills-container">
-                            <span class="skill-tag">Java</span>
-                            <span class="skill-tag">Python</span>
-                            <span class="skill-tag">C</span>
-                            <span class="skill-tag">C++</span>
-                            <span class="skill-tag">Kotlin</span>
-                            <span class="skill-tag">JavaScript</span>
-                        </div>
-                    </div>
-                    <div class="skill-category">
-                        <h3>Web Development</h3>
-                        <div class="skills-container">
-                            <span class="skill-tag">HTML5</span>
-                            <span class="skill-tag">CSS3</span>
-                            <span class="skill-tag">React.js</span>
-                            <span class="skill-tag">Node.js</span>
-                            <span class="skill-tag">Express.js</span>
-                            <span class="skill-tag">PHP</span>
-                        </div>
-                    </div>
-                    <div class="skill-category">
-                        <h3>Databases</h3>
-                        <div class="skills-container">
-                            <span class="skill-tag">MongoDB</span>
-                            <span class="skill-tag">MySQL</span>
-                            <span class="skill-tag">SQL Server</span>
-                        </div>
-                    </div>
-                    <div class="skill-category">
-                        <h3>Tools & Frameworks</h3>
-                        <div class="skills-container">
-                            <span class="skill-tag">Git & GitHub</span>
-                            <span class="skill-tag">VS Code</span>
-                            <span class="skill-tag">Figma</span>
-                            <span class="skill-tag">Android Studio</span>
-                            <span class="skill-tag">Postman</span>
-                            <span class="skill-tag">MERN Stack</span>
-                        </div>
-                    </div>
+                <h2>Technical Skills</h2>
+                <h3>Programming Languages</h3>
+                <div class="skills-container">
+                    <span class="skill-tag">Java</span>
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">JavaScript</span>
+                    <span class="skill-tag">C</span>
+                    <span class="skill-tag">C++</span>
+                    <span class="skill-tag">Kotlin</span>
+                    <span class="skill-tag">PHP</span>
+                </div>
+
+                <h3 style="margin-top: 30px;">Web Technologies</h3>
+                <div class="skills-container">
+                    <span class="skill-tag">HTML5</span>
+                    <span class="skill-tag">CSS3</span>
+                    <span class="skill-tag">JavaScript</span>
+                    <span class="skill-tag">React.js</span>
+                    <span class="skill-tag">Node.js</span>
+                    <span class="skill-tag">Express.js</span>
+                    <span class="skill-tag">JSP/Servlets</span>
+                </div>
+
+                <h3 style="margin-top: 30px;">Databases & Tools</h3>
+                <div class="skills-container">
+                    <span class="skill-tag">MongoDB</span>
+                    <span class="skill-tag">MySQL</span>
+                    <span class="skill-tag">SQL Server</span>
+                    <span class="skill-tag">Git & GitHub</span>
+                    <span class="skill-tag">Figma</span>
+                    <span class="skill-tag">VS Code</span>
+                    <span class="skill-tag">Android Studio</span>
+                    <span class="skill-tag">Postman</span>
+                    <span class="skill-tag">Jira</span>
+                </div>
+
+                <h3 style="margin-top: 30px;">Concepts & Frameworks</h3>
+                <div class="skills-container">
+                    <span class="skill-tag">MERN Stack</span>
+                    <span class="skill-tag">OOP</span>
+                    <span class="skill-tag">MVC Architecture</span>
+                    <span class="skill-tag">SDLC</span>
+                    <span class="skill-tag">Computer Networks</span>
+                    <span class="skill-tag">AI/ML</span>
                 </div>
             </div>
         </section>
@@ -141,197 +417,282 @@
         <!-- PROJECTS SECTION -->
         <section id="projects" class="section">
             <div class="card">
-                <h2 class="section-title">Featured Projects</h2>
+                <h2>Featured Projects</h2>
                 <div class="projects-grid">
-                    <!-- Project 1 -->
                     <div class="project-card">
-                        <div class="project-header">
-                            <span class="project-status ongoing">Ongoing</span>
-                        </div>
                         <h3>Epic Computer</h3>
-                        <p class="project-type">E-Commerce Web Application</p>
-                        <p class="project-desc">A comprehensive web application for a computer hardware business with AI chatbot support, user management, product management, order & billing system, and showroom billing features.</p>
-                        <div class="project-tech">
-                            <span>MongoDB</span>
-                            <span>Express.js</span>
-                            <span>React</span>
-                            <span>Node.js</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" class="project-link">View Demo</a>
-                            <a href="https://github.com/Sahan2002-cmd" class="project-link">GitHub</a>
-                        </div>
+                        <p class="project-date">December 2025 | Personal Project (Ongoing)</p>
+                        <p>E-commerce web application for a computer hardware business, enabling online and in-store purchases. Features AI chatbot support, user management, product management, order & billing management, and showroom billing system.</p>
+                        <span class="project-tech">MERN Stack</span>
                     </div>
 
-                    <!-- Project 2 -->
                     <div class="project-card">
-                        <div class="project-header">
-                            <span class="project-status completed">Completed</span>
-                        </div>
-                        <h3>Handicraft System</h3>
-                        <p class="project-type">Buying & Selling Platform</p>
-                        <p class="project-desc">Web application for a live business enabling online handicraft purchases. Features include customer feedback & ticketing management with chatbot, product management, and payment processing.</p>
-                        <div class="project-tech">
-                            <span>MERN Stack</span>
-                            <span>Chatbot</span>
-                            <span>Payment Gateway</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" class="project-link">View Demo</a>
-                            <a href="https://github.com/Sahan2002-cmd" class="project-link">GitHub</a>
-                        </div>
+                        <h3>Handicraft Marketplace</h3>
+                        <p class="project-date">July 2025 - November 2025 | Team Project</p>
+                        <p>Web application for a live business enabling customers to browse and purchase handicrafts online. Developed customer feedback & ticketing management system with integrated chatbot support.</p>
+                        <span class="project-tech">MERN Stack</span>
                     </div>
 
-                    <!-- Project 3 -->
                     <div class="project-card">
-                        <div class="project-header">
-                            <span class="project-status completed">Completed</span>
-                        </div>
-                        <h3>Simple Way</h3>
-                        <p class="project-type">Online Transport System</p>
-                        <p class="project-desc">Developed user management system for an online transport platform enabling customers to book and manage rides with payment management and customer service features.</p>
-                        <div class="project-tech">
-                            <span>Java</span>
-                            <span>JSP/Servlets</span>
-                            <span>MySQL</span>
-                            <span>JavaScript</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" class="project-link">View Demo</a>
-                            <a href="https://github.com/Sahan2002-cmd" class="project-link">GitHub</a>
-                        </div>
+                        <h3>Simple Way Transport</h3>
+                        <p class="project-date">February 2025 - June 2025 | Team Project</p>
+                        <p>Online transport system for booking and managing rides. Developed comprehensive user management module handling authentication, profiles, and role-based access control.</p>
+                        <span class="project-tech">Java, JSP/Servlets, MySQL</span>
                     </div>
 
-                    <!-- Project 4 -->
                     <div class="project-card">
-                        <div class="project-header">
-                            <span class="project-status completed">Completed</span>
-                        </div>
                         <h3>Vehicle Insurance System</h3>
-                        <p class="project-type">Insurance Management Platform</p>
-                        <p class="project-desc">Web application for managing insurance packages, policies, and claims online. Developed user management module with policy management and online payment integration.</p>
-                        <div class="project-tech">
-                            <span>PHP</span>
-                            <span>HTML/CSS</span>
-                            <span>phpMyAdmin</span>
-                            <span>XAMPP</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" class="project-link">View Demo</a>
-                            <a href="https://github.com/Sahan2002-cmd" class="project-link">GitHub</a>
-                        </div>
+                        <p class="project-date">July 2024 - December 2024 | Team Project</p>
+                        <p>Web application for managing insurance packages, policies, and claims. Built user management system with secure authentication and profile management capabilities.</p>
+                        <span class="project-tech">PHP, MySQL, XAMPP</span>
                     </div>
 
-                    <!-- Project 5 -->
                     <div class="project-card">
-                        <div class="project-header">
-                            <span class="project-status completed">Completed</span>
-                        </div>
-                        <h3>Wellness App</h3>
-                        <p class="project-type">Mobile Application</p>
-                        <p class="project-desc">Android app promoting personal wellness with daily habit tracker, hydration reminders, mood journal with emoji selector, and mood trend charts for health routine management.</p>
-                        <div class="project-tech">
-                            <span>Kotlin</span>
-                            <span>Android Studio</span>
-                            <span>SQLite</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" class="project-link">View Demo</a>
-                            <a href="https://github.com/Sahan2002-cmd" class="project-link">GitHub</a>
-                        </div>
+                        <h3>Wellness Mobile App</h3>
+                        <p class="project-date">Personal Project</p>
+                        <p>Mobile application promoting personal wellness and daily health routines. Features include daily habit tracker, hydration reminder, mood journal with emoji selector, and mood trend chart visualization.</p>
+                        <span class="project-tech">Kotlin, Android Studio</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- CERTIFICATIONS SECTION -->
-        <section id="certifications" class="section">
+        <!-- EDUCATION SECTION -->
+        <section id="education" class="section">
             <div class="card">
-                <h2 class="section-title">Certifications</h2>
-                <div class="cert-grid">
-                    <div class="cert-card">
-                        <h4>Python Programming</h4>
-                        <p class="cert-org">University of Moratuwa</p>
-                        <p class="cert-year">2026</p>
-                    </div>
-                    <div class="cert-card">
-                        <h4>Machine Learning using Python</h4>
-                        <p class="cert-org">Simplilearn.com</p>
-                        <p class="cert-year">2026</p>
-                    </div>
-                    <div class="cert-card">
-                        <h4>AI/ML Engineer - Stage 1</h4>
-                        <p class="cert-org">Faculty of Computing, SLIIT</p>
-                        <p class="cert-year">In Progress</p>
-                    </div>
-                    <div class="cert-card">
-                        <h4>Cyber Security Essentials</h4>
-                        <p class="cert-org">Vocational Training Authority of Sri Lanka</p>
-                        <p class="cert-year">2018</p>
-                    </div>
-                    <div class="cert-card">
-                        <h4>IT Essentials</h4>
-                        <p class="cert-org">Vocational Training Authority of Sri Lanka</p>
-                        <p class="cert-year">2018</p>
-                    </div>
-                    <div class="cert-card">
-                        <h4>Computer Based Application</h4>
-                        <p class="cert-org">Vocational Training Authority of Sri Lanka</p>
-                        <p class="cert-year">2018</p>
-                    </div>
+                <h2>Education & Certifications</h2>
+                
+                <div class="education-item">
+                    <h4>Bachelor of Science (Hons.) in Information Technology</h4>
+                    <p class="education-date">Sri Lanka Institute of Information Technology | 2023 - 2027</p>
+                    <p>Specializing in Information Technology with focus on software development, AI/ML, and full-stack web development.</p>
+                </div>
+
+                <div class="education-item">
+                    <h4>G.C.E. Advanced Level Examination</h4>
+                    <p class="education-date">Sri Subhuthi National School | 2021</p>
+                    <p>Science For Technology - B | ICT - C | Engineering Technology - C</p>
+                </div>
+
+                <h3 style="margin-top: 40px;">Professional Certifications</h3>
+                
+                <div class="skills-container">
+                    <span class="skill-tag">Python Programming (2026) - University of Moratuwa</span>
+                    <span class="skill-tag">Machine Learning using Python (2026) - Simplilearn</span>
+                    <span class="skill-tag">AI/ML Engineer Stage 1 - SLIIT</span>
+                    <span class="skill-tag">Cyber Security Essentials (2018) - VTA</span>
+                    <span class="skill-tag">IT Essentials (2018) - VTA</span>
+                    <span class="skill-tag">Computer Based Application (2018) - VTA</span>
                 </div>
             </div>
         </section>
 
         <!-- CONTACT SECTION -->
         <section id="contact" class="section">
-            <div class="card contact-card">
-                <h2 class="section-title">Get In Touch</h2>
-                <p class="contact-subtitle">I'm actively seeking Software Engineering Internship opportunities. Let's connect and create something amazing together!</p>
+            <div class="card">
+                <h2>Get In Touch</h2>
+                <p>I'm actively seeking Software Engineering internship opportunities and always open to collaborating on innovative projects. Let's connect and create something amazing together!</p>
+                
                 <div class="contact-info">
                     <div class="contact-item">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M0 3v18h24v-18h-24zm6.623 7.929l-4.623 5.712v-9.458l4.623 3.746zm-4.141-5.929h19.035l-9.517 7.713-9.518-7.713zm5.694 7.188l3.824 3.099 3.83-3.104 5.612 6.817h-18.779l5.513-6.812zm9.208-1.264l4.616-3.741v9.348l-4.616-5.607z"/>
-                        </svg>
-                        <div>
-                            <h4>Email</h4>
-                            <a href="mailto:sahantharakadias@gmail.com">sahantharakadias@gmail.com</a>
-                        </div>
+                        <strong>Email:</strong>&nbsp;<a href="mailto:sahantharakadias@gmail.com">sahantharakadias@gmail.com</a>
                     </div>
                     <div class="contact-item">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M20 22.621l-3.521-6.795c-.008.004-1.974.97-2.064 1.011-2.24 1.086-6.799-7.82-4.609-8.994l2.083-1.026-3.493-6.817-2.106 1.039c-7.202 3.755 4.233 25.982 11.6 22.615.121-.055 2.102-1.029 2.11-1.033z"/>
-                        </svg>
-                        <div>
-                            <h4>Phone</h4>
-                            <a href="tel:+94770554324">+94 77 055 4324</a>
-                            <a href="tel:+94789637135">+94 78 963 7135</a>
-                        </div>
+                        <strong>Phone:</strong>&nbsp;<a href="tel:+94770554324">+94 77 055 4324</a>
                     </div>
                     <div class="contact-item">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/>
-                        </svg>
-                        <div>
-                            <h4>Location</h4>
-                            <p>Battaramulla, Sri Lanka</p>
-                        </div>
+                        <strong>Location:</strong>&nbsp;Battaramulla, Sri Lanka
+                    </div>
+                    <div class="contact-item">
+                        <strong>GitHub:</strong>&nbsp;<a href="https://github.com/Sahan2002-cmd" target="_blank">@Sahan2002-cmd</a>
+                    </div>
+                    <div class="contact-item">
+                        <strong>LinkedIn:</strong>&nbsp;<a href="https://www.linkedin.com/in/sahantharaka-dias-b01322339" target="_blank">Sahan Tharaka Dias</a>
                     </div>
                 </div>
-                <div class="contact-buttons">
-                    <a href="mailto:sahantharakadias@gmail.com" class="btn btn-primary">Send Email</a>
-                    <a href="assets/documents/Sahan_Dias_CV.pdf" class="btn btn-secondary" download>Download CV</a>
+
+                <div class="social-links">
+                    <a href="mailto:sahantharakadias@gmail.com" class="btn">Send Email</a>
+                    <a href="https://github.com/Sahan2002-cmd" target="_blank" class="btn btn-secondary">View GitHub</a>
+                    <a href="https://www.linkedin.com/in/sahantharaka-dias-b01322339" target="_blank" class="btn btn-secondary">Connect on LinkedIn</a>
                 </div>
             </div>
         </section>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 Sahan Tharaka Dias. All rights reserved.</p>
-        <p>Built with Three.js & passion for web development</p>
-    </footer>
+    <script>
+        let scene, camera, renderer, particles, mouse = { x: 0, y: 0 };
 
-    <script src="js/main.js"></script>
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 50;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            const geometry = new THREE.BufferGeometry();
+            const particleCount = 2000;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 200;
+                positions[i + 1] = (Math.random() - 0.5) * 200;
+                positions[i + 2] = (Math.random() - 0.5) * 200;
+
+                const color = new THREE.Color();
+                color.setHSL(Math.random() * 0.3 + 0.5, 1, 0.5);
+                colors[i] = color.r;
+                colors[i + 1] = color.g;
+                colors[i + 2] = color.b;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 2,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            addFloatingShapes();
+
+            const light1 = new THREE.PointLight(0x00f5ff, 2, 100);
+            light1.position.set(50, 50, 50);
+            scene.add(light1);
+
+            const light2 = new THREE.PointLight(0xff00ff, 2, 100);
+            light2.position.set(-50, -50, 50);
+            scene.add(light2);
+
+            window.addEventListener('resize', onWindowResize);
+            document.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('scroll', onScroll);
+
+            animate();
+            observeCards();
+            setupNavigation();
+        }
+
+        function addFloatingShapes() {
+            const shapes = [];
+            const geometries = [
+                new THREE.TorusGeometry(5, 2, 16, 100),
+                new THREE.OctahedronGeometry(5),
+                new THREE.IcosahedronGeometry(5)
+            ];
+
+            for (let i = 0; i < 3; i++) {
+                const material = new THREE.MeshPhongMaterial({
+                    color: 0x00f5ff,
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.3
+                });
+                const mesh = new THREE.Mesh(geometries[i], material);
+                mesh.position.set(
+                    (Math.random() - 0.5) * 100,
+                    (Math.random() - 0.5) * 100,
+                    (Math.random() - 0.5) * 50
+                );
+                scene.add(mesh);
+                shapes.push(mesh);
+            }
+            window.shapes = shapes;
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            particles.rotation.y += 0.001;
+            particles.rotation.x += 0.0005;
+
+            if (window.shapes) {
+                window.shapes.forEach((shape, i) => {
+                    shape.rotation.x += 0.01 * (i + 1);
+                    shape.rotation.y += 0.01 * (i + 1);
+                });
+            }
+
+            camera.position.x += (mouse.x * 20 - camera.position.x) * 0.05;
+            camera.position.y += (-mouse.y * 20 - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+
+            renderer.render(scene, camera);
+        }
+
+        function onMouseMove(e) {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function onScroll() {
+            const scrolled = window.scrollY;
+            particles.rotation.z = scrolled * 0.0001;
+        }
+
+        function observeCards() {
+            const cards = document.querySelectorAll('.card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            cards.forEach(card => observer.observe(card));
+        }
+
+        function setupNavigation() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= sectionTop - 200) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').slice(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        init();
+    </script>
 </body>
 </html>
